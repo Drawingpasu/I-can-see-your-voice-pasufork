@@ -4,6 +4,10 @@ def 연음(음절들):
     for i in range(len(음절들) - 1):
         앞=음절들[i]
         뒤=음절들[i + 1]
+        if 앞['다음형식'] or 앞['형태소끝'] == True:
+            continue
+        elif 앞['형태소끝'] == True and 뒤['종']=='ㅏ'or'ㅓ'or'ㅗ'or'ㅜ'or'ㅟ':
+            앞['종']=대표음 #15항
 
         if 앞['한글아님'] is not None:
             continue
@@ -24,3 +28,6 @@ def 연음(음절들):
         else:
             뒤['초'] = 앞['종'] #위아래 줄 바꾸면 큰일난디...
             앞['종'] = ''
+
+
+    return 음절들
