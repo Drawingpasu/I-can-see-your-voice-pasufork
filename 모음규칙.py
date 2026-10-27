@@ -1,6 +1,6 @@
 from hangul import *
 # 5항
-def 연음(음절들):
+def 모음(음절들):
     for i in range(len(음절들) - 1):
         앞=음절들[i]
         뒤 = 음절들[i + 1]

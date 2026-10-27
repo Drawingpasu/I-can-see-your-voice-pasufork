@@ -2,6 +2,7 @@ from kiwipiepy import Kiwi
 from hangul import First, Second, Third, 겹받침
 from 연음 import 연음
 from 구개음화 import 구개음화
+from 모음규칙 import 모음규칙
 
 kiwi = Kiwi()
 
@@ -65,6 +66,7 @@ for i in range(len(문장)): #안녕 하세요면 문장[0]='안', 문장[1]='�
 #규칙 입력
 음절들=연음(음절들)
 음절들=구개음화(음절들)
+음절들=모음규칙(음절들)
 
 
 for i in 음절들:
