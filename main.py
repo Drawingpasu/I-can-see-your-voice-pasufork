@@ -3,6 +3,9 @@ from hangul import First, Second, Third, 겹받침
 from 연음 import 연음
 from 구개음화 import 구개음화
 from 모음규칙 import 모음규칙
+from 유음화 import 유음화
+from 비음화 import 비음화 
+from ㄴ첨가 import ㄴ첨가
 
 kiwi = Kiwi()
 
