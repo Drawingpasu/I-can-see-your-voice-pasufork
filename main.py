@@ -5,7 +5,7 @@ from 구개음화 import 구개음화
 from 모음규칙 import 모음규칙
 from 유음화 import 유음화
 from 비음화 import 비음화 
-from ㄴ첨가 import ㄴ첨가
+from 니은첨가 import 니은첨가
 
 kiwi = Kiwi()
 
@@ -72,7 +72,7 @@ for i in range(len(문장)): #안녕 하세요면 문장[0]='안', 문장[1]='�
 음절들=모음규칙(음절들)
 음절들=유음화(음절들)
 음절들=비음화(음절들)
-음절들=ㄴ첨가(음절들)
+음절들=니은첨가(음절들)
 
 
 for i in 음절들:
