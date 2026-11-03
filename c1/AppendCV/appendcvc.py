@@ -7,7 +7,13 @@ path = "AppendCV/assets-c/"
 filename = { #[ㅏ, ㅣ, ㅜ, ㅔ, ㅗ, ㅡ, ㅓ]
     'ㅅ': ["s.wav", "s.wav", "s.wav", "s.wav", "s.wav", "s.wav", "s.wav"],
     'ㅆ': ["ss.wav", "ss.wav", "ss.wav", "ss.wav", "ss.wav", "ss.wav", "ss.wav"],
-    'ㅎ': ["h_a.wav", "h_i.wav", "h_u.wav", "h_e.wav", "h_o.wav", "h_eu.wav", "h_eo.wav"]
+    'ㅎ': ["h_a.wav", "h_i.wav", "h_u.wav", "h_e.wav", "h_o.wav", "h_eu.wav", "h_eo.wav"],
+    'ㅁ': ["m.wav", "m.wav", "m.wav", "m.wav", "m.wav", "m.wav", "m.wav"],
+    'ㄴ': ["n.wav", "n.wav", "n.wav", "n.wav", "n.wav", "n.wav", "n.wav"],
+    'ㄹ': ["r.wav", "r.wav", "r.wav", "r.wav", "r.wav", "r.wav", "r.wav"],
+    'ㅈ': ["j_consonant.wav", "j_consonant.wav", "j_consonant.wav", "j_consonant.wav", "j_consonant.wav", "j_consonant.wav", "j_consonant.wav"],
+    'ㅊ': ["ch_consonant.wav", "ch_consonant.wav", "ch_consonant.wav", "ch_consonant.wav", "ch_consonant.wav", "ch_consonant.wav", "ch_consonant.wav"],
+    'ㅉ': ["jj_consonant.wav", "jj_consonant.wav", "jj_consonant.wav", "jj_consonant.wav", "jj_consonant.wav", "jj_consonant.wav", "jj_consonant.wav"]
     
 }
 
@@ -28,7 +34,13 @@ overlapsec = {
     '': 0, 'ㅇ': 0,
     'ㅅ': 0.015,
     'ㅆ': 0.015,
-    'ㅎ': 0.070
+    'ㅎ': 0.070,
+    'ㅁ': 0.015,
+    'ㄴ': 0.015,
+    'ㄹ': 0.015,
+    'ㅈ': 0.015,
+    'ㅊ': 0.015,
+    'ㅉ': 0.015
 }
 
 

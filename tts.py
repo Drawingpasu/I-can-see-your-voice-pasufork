@@ -17,7 +17,8 @@ import numpy as np
 띄어쓰기쉼 = 0.12          #띄어쓰기에서 쉬는 시간
 막힘시간 = 0.03            #어절 안에서 받침 ㄱ ㄷ ㅂ 뒤에 막혀 있는 시간
 무음기준 = -50             #음절 끝에서 이것보다 작은 소리(dB)는 무음으로 보고 잘라냄
-샘플레이트 = 48000
+샘플레이트 = 44100
+음절간전환시간 = 0.03
 
 
 from v.VowelSynthesizer import generator
@@ -100,9 +101,14 @@ for i in range(len(한글음절)):
 
 #========== 3. 저장 ==========
 if len(조각들) > 0:
-    결과 = np.concatenate(조각들)
+    결과 = 조각들[0]
+    for i in range(1, len(조각들)):
+        결과 = appendcvc.crossfade(결과, 조각들[i], 음절간전환시간)
+
 else:
     결과 = np.zeros(0, dtype=np.int16)
+    
+        
 
 if 파일이름.endswith('.wav'):
     파일이름 = 파일이름[:-4]
