@@ -14,6 +14,9 @@ kiwi = Kiwi()
 
 문장= input() + ' '
 
+def inputed_sentence():
+    return 문장[:-1]
+
 형태소=kiwi.tokenize(문장) #나중에 음운변동처리할때 쓸꺼임
 형태소_정보={}
 시작위치={t.start for t in 형태소}   # 형태소가 시작하는 글자 위치들 (뒤 음절이 새 형태소의 시작인지 판단용)

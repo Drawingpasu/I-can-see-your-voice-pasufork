@@ -20,40 +20,29 @@ import numpy as np
 샘플레이트 = 48000
 
 
-#모듈들이 초성, 중성, 종성 폴더 안에 나눠져 있고, 폴더 이름도 VowelSynthesizer-main처럼 되어 있어서 그냥은 import가 안 됨
-#그래서 VowelSynthesizer라고 부르면 중성/VowelSynthesizer-main 폴더를 보게 연결해줌
-위치 = {
-    'AppendCV': '초성',           #ㅅ ㅆ ㅎ, ㄱㅋㄲ ㄷㅌㄸ ㅂㅍㅃ
-    'VowelSynthesizer': '중성',   #단모음, 이중모음
-    'CodaSynthesizer': '종성'     #ㄱ ㄴ ㄷ ㅁ ㅂ ㅇ
-}
-for 이름 in 위치:
-    경로 = os.path.join(폴더, 위치[이름], 이름)
-    if not os.path.isdir(경로):
-        경로 = 경로 + '-main'
-    모듈 = types.ModuleType(이름)
-    모듈.__path__ = [경로]
-    sys.modules[이름] = 모듈
-
-from VowelSynthesizer import generator
-from AppendCV import appendcvc, appendstop
-
-#AppendCV는 자음 파일을 'AppendCV/assets-c/'에서 찾아서, 어디서 실행해도 찾게 경로를 바꿔줌
-appendcvc.path = os.path.join(sys.modules['AppendCV'].__path__[0], 'assets-c') + os.sep
+from v.VowelSynthesizer import generator
+from c1.AppendCV import appendcvc, appendstop
+appendcvc.path = os.path.join(
+    os.path.dirname(appendcvc.__file__), 'assets-c'
+) + os.sep
 
 
-if len(sys.argv) > 1:
-    파일이름 = sys.argv[1]
-else:
-    파일이름 = 'output'
 
 
 # 1. 음운 변동
 sys.path.insert(0, os.path.join(폴더, '음운 변동'))
 import main
+from main import inputed_sentence
 from hangul import First, Second, Third
 
 음절들 = main.음절들
+
+if len(sys.argv) > 1:
+    파일이름 = sys.argv[1]
+else:
+    #파일이름 = 'output'
+    파일이름 = inputed_sentence()
+
 
 
 #2. 음성 합성

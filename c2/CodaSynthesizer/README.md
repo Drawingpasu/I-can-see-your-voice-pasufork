@@ -1,6 +1,6 @@
 # CodaSynthesizer - 종성(받침) 붙이는 모듈
 
-_**개발시 주의사항: [VowelSynthesizer](../../중성/VowelSynthesizer-main), [AppendCV](../../초성/AppendCV-main)를 불러다 씀. 최상위 tts.py로 실행하면 폴더 연결이 자동으로 됨** (따로 쓸 땐 `VowelSynthesizer`, `AppendCV` 이름으로 import 되게 해야 함)_
+_**개발시 주의사항: [VowelSynthesizer](../../v/VowelSynthesizer), [AppendCV](../../c1/AppendCV)를 불러다 씀. 최상위 tts.py로 실행하면 폴더 연결이 자동으로 됨** (따로 쓸 땐 `VowelSynthesizer`, `AppendCV` 이름으로 import 되게 해야 함)_
 
 기존 모듈(gen_vowel.py, appendcvc.py, coda_table.py) 코드는 하나도 안 고침. appendcoda.py가 셋을 불러다가 이어붙이기만 함.
 

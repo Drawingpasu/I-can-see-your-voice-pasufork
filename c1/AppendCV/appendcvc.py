@@ -1,13 +1,14 @@
 import numpy as np
 from scipy.io import wavfile
-from VowelSynthesizer import gen_vowel
-from VowelSynthesizer.gen_vowel import vowelseps
+from v.VowelSynthesizer import gen_vowel
+from v.VowelSynthesizer.gen_vowel import vowelseps
 
 path = "AppendCV/assets-c/"
 filename = { #[ㅏ, ㅣ, ㅜ, ㅔ, ㅗ, ㅡ, ㅓ]
     'ㅅ': ["s.wav", "s.wav", "s.wav", "s.wav", "s.wav", "s.wav", "s.wav"],
     'ㅆ': ["ss.wav", "ss.wav", "ss.wav", "ss.wav", "ss.wav", "ss.wav", "ss.wav"],
     'ㅎ': ["h_a.wav", "h_i.wav", "h_u.wav", "h_e.wav", "h_o.wav", "h_eu.wav", "h_eo.wav"]
+    
 }
 
 
@@ -81,7 +82,7 @@ def crossfade(au1, au2, transSec, sample_rate = 44100): #au1랑 au2는 모두 �
 # 그전에!!! append에서 받는 duration은 모음 기준임!!!
 def append(c1, v, c2, pitch, duration, medial = False): #c1과 v와 c2는 문자, pitch는 튜플, duration은 실수, medial은 모음 사이 평음일때 True
     #(추가) 파열음 초성이거나 종성이 있으면 appendstop.py에서 만듦
-    from AppendCV import appendstop
+    from c1.AppendCV import appendstop
     if c1 in appendstop.filename or c2 != '':
         return appendstop.append(c1, v, c2, pitch, duration, medial=medial)
 

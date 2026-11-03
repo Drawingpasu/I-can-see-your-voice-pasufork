@@ -2,7 +2,7 @@ import os
 import numpy as np
 from scipy.io import wavfile
 from scipy.signal import resample_poly
-from CodaSynthesizer import appendcoda
+from c2.CodaSynthesizer import appendcoda
 
 #초성 파열음(ㄱㅋㄲ ㄷㅌㄸ ㅂㅍㅃ) 붙이는 코드. appendcvc.append()에서 파열음이나 종성이 있으면 여기로 넘어옴
 #파열음 파일(assets-c 안의 *_consonant.wav)은 stops_v3 폴더 코드로 만든 자음 부분만 있는 파일
@@ -130,7 +130,7 @@ def append(c1, v, c2, pitch, duration, sample_rate = 48000, medial = False): #c1
 
     pitch = stop_pitch(c1, pitch)
     if c2 == '':
-        from VowelSynthesizer import gen_vowel
+        from v.VowelSynthesizer import gen_vowel
         V = gen_vowel.make_sound(v, pitch, duration, sample_rate=sample_rate)
     else:
         V = appendcoda.make_vc(v, pitch, c2, duration, sample_rate=sample_rate)
