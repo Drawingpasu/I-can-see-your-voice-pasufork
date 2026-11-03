@@ -1,4 +1,4 @@
-from VowelSynthesizer import generator, dBFilter
+from v.VowelSynthesizer import generator, dBFilter
 import numpy as np
 
 

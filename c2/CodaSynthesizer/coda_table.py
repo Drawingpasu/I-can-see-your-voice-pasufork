@@ -18,7 +18,7 @@ from scipy.optimize import least_squares
 from scipy.signal import resample_poly
 
 try:
-    from VowelSynthesizer import dBFilter
+    from v.VowelSynthesizer import dBFilter
 except ImportError:
     import dBFilter
 

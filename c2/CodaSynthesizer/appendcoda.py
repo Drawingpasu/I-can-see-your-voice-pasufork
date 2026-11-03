@@ -1,8 +1,8 @@
 import numpy as np
-from VowelSynthesizer import gen_vowel
-from VowelSynthesizer.gen_vowel import vowelseps
-from AppendCV import appendcvc
-from CodaSynthesizer import coda_table
+from v.VowelSynthesizer import gen_vowel
+from v.VowelSynthesizer.gen_vowel import vowelseps
+from c1.AppendCV import appendcvc
+from c2.CodaSynthesizer import coda_table
 
 #기존 모듈(VowelSynthesizer, AppendCV, coda_table)은 손대지 않고, 여기서 불러다가 종성까지 붙임
 
