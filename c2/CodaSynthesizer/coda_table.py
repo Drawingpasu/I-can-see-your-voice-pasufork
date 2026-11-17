@@ -112,12 +112,17 @@ CODA_TAIL = 0.27     # 모음 끝에서 소리가 끝날 때까지 길이(초)
 
 def build_keys(coda, T0, vow, bursts=True, l_style="alvtrans", release="leak", leak_db=None, fast_d=True, leak_over=None):
     TOTAL = T0 + CODA_TAIL
+    # ㄴ 전환만 앞당기고 유지 시간을 늘려 원래 끝 시각을 보존한다.
+    advance = min(0.03, max(0.0, T0 - 0.025)) if coda == "ㄴ" else 0.0
+    T0 -= advance
     place, kind = CODAS[coda]
     new = coda in ("ㅂ", "ㄱ", "ㅇ", "ㄹ") or (fast_d and coda == "ㄷ")          # 빠른 닫힘(확정판): ㅁ ㄴ ㄷ은 느린 전이
     if new:
         t1 = T0 + {"stop": 0.03, "nasal": 0.02, "lateral": 0.05}[kind]
     else:
         t1 = T0 + {"stop": 0.07, "nasal": 0.07, "lateral": 0.08}[kind]
+    if coda in ("ㄴ", "ㅁ"):
+        t1 = T0 + 0.04  # 모음에서 비음으로 전환: 40ms
     tgt = dict(F1=400, F2=1150, F3=2800, Fz=1800) if kind == "lateral" else PLACE[place]
     def path(name, mid_t, mid_v, end=None):
         v0 = vow[name]
@@ -140,17 +145,18 @@ def build_keys(coda, T0, vow, bursts=True, l_style="alvtrans", release="leak", l
                     spec["db"] = leak_db[0] if coda == "ㅂ" else leak_db[1]
                 k["leak"] = (t1, spec)
     elif kind == "nasal":
-        k["G"] = [(0, 1), (T0, 1), (t1, 0.2), (t1 + 0.06, 0.2), (t1 + 0.09, 0), (TOTAL, 0)]
+        hold = (0.03 if coda in ("ㄴ", "ㅁ") else 0.06) + advance
+        k["G"] = [(0, 1), (T0, 1), (t1, 0.2), (t1 + hold, 0.2), (t1 + hold + 0.03, 0), (TOTAL, 0)]
         if new:
             k["D"] = [(0, 0), (T0 + 0.005, 0), (t1, 0.9), (TOTAL, 0.9)]
             k["n"] = [(0, 0), (T0, 0), (t1, 1), (TOTAL, 1)]
         else:
             k["D"] = [(0, 0), (T0 + 0.02, 0), (t1, 0.85), (TOTAL, 0.85)]
             k["n"] = [(0, 0), (T0, 0), (t1 - 0.02, 1), (TOTAL, 1)]
-    if coda == "ㄱ":        # 혀뿌리가 막히는 모델 (버스트 없음) - 청취 확정
-        tb = T0 + 0.045
+    if coda == "ㄱ":        # 혀뿌리가 막히는 모델 (버스트 없음)
+        tb = T0 + 0.010  # 전환 10ms; 닫힘 이후 잔여 감쇠 90ms
         k["F1"] = path("F1", tb, 400); k["F2"] = path("F2", tb, 1750); k["F3"] = path("F3", tb, 2150)
-        k["G"] = [(0, 1), (T0, 1), (tb - 0.012, 0.8), (tb, 0.7), (tb + 0.010, 0.06), (tb + 0.040, 0.03), (tb + 0.060, 0), (TOTAL, 0)]
+        k["G"] = [(0, 1), (T0, 1), (tb - 0.008, 0.8), (tb, 0.7), (tb + 0.010, 0.06), (tb + 0.070, 0.03), (tb + 0.090, 0), (TOTAL, 0)]
         k["D"] = [(0, 0), (tb - 0.005, 0), (tb + 0.005, 1.0), (TOTAL, 1.0)]
     if coda == "ㅇ":        # ㄱ과 같은 혀뿌리 막힘 경로 + 비강 울림이 모음 끝부터 이어짐
         ng = dict(level=0.42, hold=0.19, n=3.0, fade=0.03, n_start=-0.04, qn=4.0, pg=None, gcont=True, D=0.9, post_F2=700, post_F3=1900)   # 청취 확정(과장3)
@@ -196,11 +202,13 @@ def build_keys(coda, T0, vow, bursts=True, l_style="alvtrans", release="leak", l
                 k["G"] = [(0, 1), (T0, 1), (tl, gl), (te, gl), (te + 0.014, 0.0), (TOTAL, 0)]
             else:
                 k["G"] = [(0, 1), (T0, 1), (tl, gl), (tl + 0.07, gl), (tl + 0.12, 0), (TOTAL, 0)]
-        elif l_style in ("en_dark", "en_tip", "en_soft", "op_a", "op_b", "op_tip", "st_a", "st_b", "st_c"):
+        elif l_style in ("en_dark", "en_tip", "en_soft", "ng_short", "op_a", "op_b", "op_tip", "st_a", "st_b", "st_c"):
             # 영어 어말 어두운 /ɫ/: 입이 열린 채 F1·F2가 완만하게 내려가고 F3는 높게 남는 지속음 (뚝 끊기지 않음).
             # en_*: F1 400 (닫힌 느낌) / op_*: F1을 올려 열린 소리로 (암처럼 닫혀 들리는 문제 보완)
             D_ = dict(f1=400, f2=1000, f3=2800, tg=0.060, g=0.28, par=0.35, hold=0.07, fade=0.06, plp=2400.0, tip=False)
             D_.update({"en_dark": {}, "en_tip": dict(tip=True), "en_soft": dict(g=0.18, par=0.30, fade=0.07, plp=1800.0),
+                       # 종성 ㅇ: 전환 40ms + 유지 30ms + 감쇠 30ms
+                       "ng_short": dict(f1=600, f2=1200, f3=2800, tg=0.040, g=0.42, par=0.45, hold=0.03, fade=0.03),
                        "op_a": dict(f1=600, f2=1200, f3=2800, tg=0.050, g=0.42, par=0.45),
                        "op_b": dict(f1=700, f2=1300, f3=2800, tg=0.050, g=0.45, par=0.50),
                        "op_tip": dict(f1=700, f2=1300, f3=2800, tg=0.050, g=0.45, par=0.50, tip=True),
@@ -360,6 +368,7 @@ def synth_float(vowel, f0, coda, vowel_dur=0.12, sample_rate=48000, bursts=True,
     fit = fit_vowel(vowel)
     vow = dict(F1=fit["F1"], F2=fit["F2"], F3=fit["F3"])
     keys = build_keys(coda, T0, vow, bursts, l_style, release, leak_db, fast_d, leak_over)
+    transition_start = keys["F1"][1][0]
     t1 = keys["F1"][2][0]
     K = int(5720 // min(f0a, f0b))
     ks = np.arange(1, K + 1)
@@ -395,7 +404,7 @@ def synth_float(vowel, f0, coda, vowel_dur=0.12, sample_rate=48000, bursts=True,
         defined = table_db(vowel, fr) > -60          # 표에 값이 있는 배음만 음원 보정을 유지, 표가 'X'(무음)인 배음은 보정 없음(1)
         S = np.exp(np.mean(np.log(corr0[defined]))) if defined.any() else 1.0   # 표(int16 단위)와 포락선(단위 1)의 크기 단위 차이
         cpart = S * np.where(defined, np.clip(corr0 / S, 1 / 8, 8), 1.0)
-        p = np.clip((t - T0) / (t1 - T0), 0, 1)
+        p = np.clip((t - transition_start) / (t1 - transition_start), 0, 1)
         corr = cpart + (corr0 - cpart) * (1 - p)
         env = fit["g"] * envelope(fr, tr("F1", t), tr("F2", t), tr("F3", t), fit["Q2"], float(tr("n", t)),
                                   float(tr("Fz", t)), fit["F1"], float(tr("D", t)),
@@ -440,7 +449,7 @@ def make_coda(vowel, f0, coda, vowel_dur=0.12, sample_rate=48000, bursts=True, l
     f0: 숫자 또는 (시작, 끝) 튜플 / coda: ㄱ ㄴ ㄷ ㄹ ㅁ ㅂ ㅇ / vowel_dur: 모음 정상 구간(초)
     bursts=False 면 ㅂ·ㄷ 끝의 바람/터짐을 뺀다. release='leak'(기본: 새다가 탁 막힘) / 'burst'(옛 터짐). leak_db=(ㅂ,ㄷ) dB로 세기 조절. ㄹ은 미확정 시험판."""
     if coda == "ㅇ" and ng_style == "op_a":      # 앙: 열린 지속음 방식(op_a) 청취 지정. ng_style="nasal" 이면 이전 비강 울림 방식
-        coda, l_style = "ㄹ", "op_a"
+        coda, l_style = "ㄹ", "ng_short"
     x = synth_float(vowel, f0, coda, vowel_dur, sample_rate, bursts, l_style, None, release, leak_db, fast_d, leak_over)
     if np.abs(x).max() > 32767:
         raise ValueError("진폭이 16비트를 넘음")
