@@ -12,8 +12,10 @@ import numpy as np
 
 #설정 (단위는 초, Hz)
 피치 = (260, 250)          #보통 음절 피치
+H피치 = (275, 265)          #높을 때
+L피치 = (200, 190)          #낮을 때
 마지막피치 = (250, 200)    #문장 마지막 음절 피치 (끝을 내려줌)
-모음길이 = 0.2             #모음 지속시간 (append의 duration)
+모음길이 = 0.18             #모음 지속시간 (append의 duration)
 띄어쓰기쉼 = 0.12          #띄어쓰기에서 쉬는 시간
 막힘시간 = 0.03            #어절 안에서 받침 ㄱ ㄷ ㅂ 뒤에 막혀 있는 시간
 무음기준 = -50             #음절 끝에서 이것보다 작은 소리(dB)는 무음으로 보고 잘라냄
@@ -66,6 +68,66 @@ for 음절 in 음절들:
     if 음절['한글아님'] is None:   #한글 아닌 글자(문장부호 등)는 빼고
         한글음절.append(음절)
 
+############ 억양 만들기 ##############
+pointer = 0 # 아이터레이터?
+
+pitches = [] # 여기다가 튜플 저장할거임
+
+강자음과마찰음 = ['ㄲ', 'ㄸ', 'ㅃ', 'ㅆ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+
+while pointer < len(한글음절):
+    #덩어리 하나 떼낼거임
+    l = pointer
+    while 한글음절[pointer]['어절끝'] is False:
+        pointer += 1
+    pointer += 1
+
+    chunkSize = pointer - l
+
+    #이제부터 본격적으로 ㄱㄱ
+    for i in range(l, l + chunkSize):
+        #어우 헷갈려 걍 절댓값으로 ㄱㄱ 그 어절에서 몇번째 인덱스인지
+        absi = i - l
+
+        if absi == 0: #일단 다 공통되는건 첫음절이 강자음 or 마찰음이면 H 아니면 L이니 이거부터 해줌
+            if 한글음절[i]['초'] in 강자음과마찰음:
+                pitches.append(H피치)
+            else:
+                pitches.append(L피치)
+
+            continue
+
+        if chunkSize == 4:
+            pitches.append(H피치)
+            pitches.append(L피치)
+            pitches.append(마지막피치)
+
+            break
+
+        if chunkSize >= 5:
+            pitches.append(H피치)
+            for j in range(chunkSize-4):
+                pitches.append(피치)
+            pitches.append(L피치)
+            pitches.append(마지막피치)
+
+            break
+
+        else:
+            for j in range(chunkSize-2):
+                pitches.append(피치)
+            pitches.append(피치)
+
+            break
+
+    pointer = l + chunkSize
+
+
+pitches.pop(-1)
+pitches.append(마지막피치)
+
+####################################
+
 조각들 = []
 for i in range(len(한글음절)):
     음절 = 한글음절[i]
@@ -86,12 +148,15 @@ for i in range(len(한글음절)):
         if not 앞['어절끝'] and 앞['종'] in ['', 'ㄴ', 'ㅁ', 'ㅇ', 'ㄹ']:
             모음사이 = True
 
-    if 마지막음절:
-        p = 마지막피치
-    else:
-        p = 피치
 
-    소리 = appendcvc.append(초, 중, 종, p, 모음길이, medial=모음사이).astype(np.int16)
+    # # 피치 적용 부분
+    # if 마지막음절:
+    #     p = 마지막피치
+    # else:
+    #     p = 피치
+
+    # 진짜 오디오 생성 부분
+    소리 = appendcvc.append(초, 중, 종, pitches[i], 모음길이, medial=모음사이).astype(np.int16)
     조각들.append(끝무음자르기(소리))
 
     #받침 ㄱ ㄷ ㅂ 뒤에는 막힘 시간만큼 무음
