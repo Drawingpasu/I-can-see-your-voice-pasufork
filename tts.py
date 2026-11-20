@@ -100,7 +100,7 @@ while pointer < len(한글음절):
         if chunkSize == 4:
             pitches.append(H피치)
             pitches.append(L피치)
-            pitches.append(마지막피치)
+            pitches.append(H피치)
 
             break
 
